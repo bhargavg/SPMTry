@@ -1,6 +1,5 @@
 import Foundation
 import Result
-import Utilities
 import Yams
 
 public func findExecutables(for repo: Repo) -> Result<[URL], SPMRunError> {
@@ -13,24 +12,20 @@ public func findExecutables(for repo: Repo) -> Result<[URL], SPMRunError> {
 }
 
 func findExecutables(yamlPath: URL, repo: Repo) -> Result<[URL], SPMRunError> {
-    guard let yaml = try? Yams.compose(yaml: String(contentsOfFile: yamlPath.path, encoding: .utf8)),
-          let commands = yaml?["commands"]?.mapping?.values else {
+    guard let mayBeCommands = try? compose(yaml: String(contentsOfFile: yamlPath.path, encoding: .utf8))?["commands"],
+          let commands = mayBeCommands?.mapping else {
         return .failure(.noExecutableFound)
     }
 
-    let execNames = commands.filter({
-        guard let isLibrary = $0["is-library"]?.bool else {
-            return false
-        }
-        return !isLibrary
+    let executableURLs = commands.filter({
+        return $0.key.string?.hasSuffix(".exe>") ?? false
     }).flatMap({
-        $0["module-name"]?.string
-    })
+        $0.value.mapping?["outputs"]?.array().first ?? ""
+    }).map(URL.init(fileURLWithPath:))
 
-    return repo.binDirectory.map({ binDirectory in
-        return execNames.map({ execName in
-            binDirectory.appendingPathComponent("debug")
-                        .appendingPathComponent(execName)
-        })
-    })
+    guard !executableURLs.isEmpty else {
+        return .failure(.noExecutableFound)
+    }
+
+    return .success(executableURLs)
 }

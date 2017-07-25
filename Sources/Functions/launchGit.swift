@@ -1,6 +1,5 @@
 import Foundation
 import Result
-import Utilities
 
 public func launchGit(
     args: [String],

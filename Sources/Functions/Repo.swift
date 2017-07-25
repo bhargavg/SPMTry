@@ -1,6 +1,5 @@
 import Foundation
 import Result
-import Utilities
 
 public struct Repo {
     public let remoteURL: URL

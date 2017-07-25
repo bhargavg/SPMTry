@@ -1,6 +1,5 @@
 import Result
 import Foundation
-import Utilities
 
 public func clone(repo: Repo) -> Result<Repo, SPMRunError> {
     guard !repo.isAlreadyCloned else {

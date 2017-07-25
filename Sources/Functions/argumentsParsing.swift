@@ -1,6 +1,5 @@
 import Foundation
 import Result
-import Utilities
 
 public func parse(arguments: [String]) -> Result<Repo, ArgParseError> {
     let modifiedArgs = (arguments.count == 2) ? arguments + ["--tag", "latest"] : arguments

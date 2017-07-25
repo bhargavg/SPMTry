@@ -1,9 +1,8 @@
 import Foundation
 import Result
-import Utilities
 
 public func checkout(repo: Repo) -> Result<Repo, SPMRunError> {
-    print("Checking out...")
+    print("Checking out \(repo.ref)...")
     return repo.resolveReference()
                .map(repo.with(resolvedHash:))
                .flatMap({ repo in

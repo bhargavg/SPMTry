@@ -1,11 +1,9 @@
 import Foundation
 import Result
-import Utilities
 
 public func ensureBaseDirectoryExists(for repo: Repo) -> Result <Repo, SPMRunError> {
     return ensureDirectoryExists(at: repo.baseDirectory).map({ _ in repo })
 }
-
 
 public func ensureDirectoryExists(at directoryPath: URL) -> Result<URL, SPMRunError> {
     let fileManager = FileManager.default

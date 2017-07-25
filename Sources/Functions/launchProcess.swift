@@ -14,13 +14,17 @@ public func launchProcess(path: String, args: [String]) -> Result<String, SPMRun
     task.standardError = stdErrPipe
 
     task.launch()
-    task.waitUntilExit()
 
     // Get the data
-    let stdOutData = stdOutPipe.fileHandleForReading.readDataToEndOfFile()
-    let stdErrData = stdErrPipe.fileHandleForReading.readDataToEndOfFile()
-    let output = String(data: stdOutData, encoding: .utf8)
-    let error  = String(data: stdErrData, encoding: .utf8)
+    let processStdOut = stdOutPipe.fileHandleForReading
+    let processStdErr = stdErrPipe.fileHandleForReading
+    let output = String(data: processStdOut.readDataToEndOfFile(), encoding: .utf8)
+    let error  = String(data: processStdErr.readDataToEndOfFile(), encoding: .utf8)
+
+    defer {
+        processStdOut.closeFile()
+        processStdErr.closeFile()
+    }
 
     guard task.terminationStatus == 0 else {
         return .failure(.processFailed(error ?? ""))
