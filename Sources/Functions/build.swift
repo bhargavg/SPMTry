@@ -18,7 +18,7 @@ public func build(repo: Repo) -> Result<Repo, SPMRunError> {
             "--build-path", binDirectory.path
         ]
 
-        return launchProcess(
+        return launchInteractiveProcess(
             path: "/usr/bin/swift",
             args: arguments
         ).map({ _ in

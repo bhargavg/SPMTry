@@ -1,6 +1,15 @@
 import Foundation
 import Result
 
+public func handle(_ result: Result<String, SPMRunError>) {
+    switch result {
+    case let .success(output):
+        print(output)
+    case let .failure(err):
+        handle(error: err)
+    }
+}
+
 public func handle(error: SPMRunError) {
     switch error {
     case let .argumentParseError(err):
@@ -11,8 +20,12 @@ public func handle(error: SPMRunError) {
         print("Morethan one executable found")
     case .unresolvedRepo:
         print("Unresolved Repo")
-    case let .binDirError(reason), let .processFailed(reason):
+    case let .binDirError(reason):
         print("Failed with error: \(reason)")
+    case .processFailed(.unknown):
+        print("Failed with unknown error")
+    case let .processFailed(.error(code, message)):
+        print("Failed with code: \(code), message: \(message ?? "")")
     }
 }
 

@@ -72,7 +72,11 @@ public struct Repo {
     }
 
     public func resolveReference() -> Result<String, SPMRunError> {
-        return getHash().recover(with: fetchRemote().flatMap({ _ in getHash() }))
+        return getHash().recover(with:
+            fetchRemote().flatMap({ _ in
+                getHash()
+            })
+        )
     }
 
     private func getHash() -> Result<String, SPMRunError> {
@@ -83,21 +87,22 @@ public struct Repo {
             return launchGit(
                 args: ["rev-parse", "--verify", name],
                 repo: self
-            )
+            ).mapError({ _ in .unresolvedRepo })
         case let .tag(.absolute(tagName)):
             return launchGit(
                 args: ["rev-parse", "--verify", "\(tagName)^{commit}"],
                 repo: self
-            )
+            ).mapError({ _ in .unresolvedRepo })
         case .tag(.latest):
             return launchGit(
                 args: ["describe", "--tags"],
                 repo: self
-            ).flatMap({ latestTagName in
+            ).mapError({ _ in .unresolvedRepo })
+             .flatMap({ latestTagName in
                 return launchGit(
                     args: ["rev-parse", "--verify", "\(latestTagName)^{commit}"],
                     repo: self
-                )
+                ).mapError({ _ in .unresolvedRepo })
             })
         }
     }
@@ -139,6 +144,10 @@ extension URL {
         /// FIXME: this is not supported because, as of now, we can't
         /// parse this URL
         guard !arg.hasPrefix("git@") else {
+            return .failure(.invalidURL)
+        }
+        
+        guard !arg.isEmpty else {
             return .failure(.invalidURL)
         }
 

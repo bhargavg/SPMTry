@@ -1,17 +1,14 @@
 import Foundation
+import Result
 import Functions
-import Utilities
 
+initialize()
 
-let result = parse(
+let result = parseAction(
    arguments: CommandLine.arguments
 ).mapError({ SPMRunError.argumentParseError($0) })
- .flatMap(clone(repo:))
- .flatMap(checkout(repo:))
- .flatMap(build(repo:))
- .flatMap(findExecutables(for:))
- .flatMap(pickExecutableToRun(list:))
- .flatMap(runExecutable(at:))
+ .flatMap(perform(action:))
+
 
 handle(result)
 

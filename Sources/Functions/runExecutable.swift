@@ -1,10 +1,10 @@
 import Foundation
 import Result
 
-public func runExecutable(at execPath: URL) -> Result<String, SPMRunError> {
-    print("Running \"\(execPath.lastPathComponent)\": ")
-    return launchProcess(
+public func runExecutable(at execPath: URL, args: [String]) -> Result<String, SPMRunError> {
+    print("Running \"\(execPath.lastPathComponent)\" (use Ctrl+C to terminate) ")
+    return launchInteractiveProcess(
         path: execPath.path,
-        args: []
-    )
+        args: args
+    ).map({ _ in "" })
 }

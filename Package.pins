@@ -2,12 +2,6 @@
   "autoPin": true,
   "pins": [
     {
-      "package": "CCommonCrypto",
-      "reason": null,
-      "repositoryURL": "https://github.com/Bouke/CCommonCrypto",
-      "version": "1.0.0"
-    },
-    {
       "package": "Result",
       "reason": null,
       "repositoryURL": "https://github.com/antitypical/Result.git",
